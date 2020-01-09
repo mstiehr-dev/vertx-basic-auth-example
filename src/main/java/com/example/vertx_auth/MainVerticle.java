@@ -8,7 +8,9 @@ import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BasicAuthHandler;
 import io.vertx.ext.web.handler.BodyHandler;
-import io.vertx.ext.web.handler.FormLoginHandler;
+import io.vertx.ext.web.handler.SessionHandler;
+import io.vertx.ext.web.sstore.LocalSessionStore;
+import io.vertx.ext.web.sstore.SessionStore;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
@@ -21,13 +23,17 @@ public class MainVerticle extends AbstractVerticle {
   public void start(Promise<Void> startPromise) throws Exception {
 
     Router router = Router.router(vertx);
-    router.route().handler(BodyHandler.create());
+    router.route()
+      .handler(BodyHandler.create())
+      .handler(SessionHandler.create(LocalSessionStore.create(vertx)))
+    ;
     router.get("/")
-      .handler(new LoginPageHandler(templateEngine));
+      .handler(new LoginPageHandler(templateEngine))
+    ;
     router.route("/admin")
       .handler(new DebugHandler())
 //      .handler(FormLoginHandler.create(authProvider).setDirectLoggedInOKURL("admin"))
-      .handler(new FormAuthhandler())
+      .handler(new FormAuthHandler(authProvider))
       .handler(BasicAuthHandler.create(authProvider))
       .handler(new AdminPageHandler(templateEngine))
     ;
@@ -35,6 +41,7 @@ public class MainVerticle extends AbstractVerticle {
 
     vertx.createHttpServer()
       .requestHandler(router)
+      .exceptionHandler(new ExceptionHandler())
     .listen(8888, http -> {
       if (http.succeeded()) {
         startPromise.complete();

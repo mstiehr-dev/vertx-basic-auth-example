@@ -17,6 +17,10 @@ public class LogoutPageHandler implements Handler<RoutingContext> {
 
   @Override
   public void handle(RoutingContext context) {
+
+    context.clearUser();
+    context.session().destroy();
+
     String page = templateEngine.process(templateName, thyCtx);
     context.response().setStatusCode(401).end(page);
   }

@@ -2,5 +2,16 @@
 <body>
 <h1>oh hai <span th:text="${username}"/></h1>
 <h6><a href="/logout">logout</a></h6>
+<p>
+  <form action="/admin" method="post">
+    <select id="content" name="content">
+      <option value="none">None</option>
+      <option value="option one">option one</option>
+      <option value="option two">option two</option>
+      <option value="option three">option three</option>
+    </select>
+  <input type="submit" name="submit-config" id="config-submit"/>
+  </form>
+</p>
 </body>
 </html>

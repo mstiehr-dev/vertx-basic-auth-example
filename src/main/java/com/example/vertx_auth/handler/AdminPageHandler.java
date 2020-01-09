@@ -18,9 +18,17 @@ public class AdminPageHandler implements Handler<RoutingContext> {
 
   @Override
   public void handle(RoutingContext context) {
-    String username = ((User) context.user()).getUsername();
-    thyCtx.setVariable("username", username);
-    String page = templateEngine.process(templateName, thyCtx);
+
+    String page;
+    if (context.request().getParam("submit-config") != null) {
+      String content = context.request().getParam("content");
+      page = "successfully changed config to [" + content + "]"; // TODO render a template
+    } else {
+      // initial call
+      String username = ((User) context.user()).getUsername();
+      thyCtx.setVariable("username", username);
+      page = templateEngine.process(templateName, thyCtx);
+    }
     context.response()
       .setStatusCode(200)
       .end(page);
