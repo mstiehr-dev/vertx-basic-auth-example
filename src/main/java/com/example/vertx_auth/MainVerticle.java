@@ -1,28 +1,33 @@
 package com.example.vertx_auth;
 
+import com.example.vertx_auth.handler.AdminPageHandler;
+import com.example.vertx_auth.handler.DebugHandler;
+import com.example.vertx_auth.handler.LogoutPageHandler;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
-import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BasicAuthHandler;
-import io.vertx.ext.web.handler.impl.BasicAuthHandlerImpl;
+import org.thymeleaf.TemplateEngine;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
 public class MainVerticle extends AbstractVerticle {
 
   private AuthProvider authProvider = new CustomAuthProvider();
+  private TemplateEngine templateEngine = templateEngine();
 
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
 
     Router router = Router.router(vertx);
-    router.route("/")
+//    router.get("/").handler(new LoginPageHandler(templateEngine));
+    router.route("/admin")
+      .handler(new DebugHandler())
       .handler(BasicAuthHandler.create(authProvider))
-      .handler(req -> {
-        req.response().setStatusCode(200).end("yay");
-      })
+      .handler(new AdminPageHandler(templateEngine))
     ;
+    router.route("/logout").handler(new LogoutPageHandler(templateEngine));
 
     vertx.createHttpServer()
       .requestHandler(router)
@@ -34,6 +39,20 @@ public class MainVerticle extends AbstractVerticle {
         startPromise.fail(http.cause());
       }
     });
+  }
+
+  private TemplateEngine templateEngine() {
+    TemplateEngine templateEngine = new TemplateEngine();
+
+    ClassLoaderTemplateResolver resolver = new ClassLoaderTemplateResolver();
+    resolver.setPrefix("templates/");
+    resolver.setSuffix(".html");
+    resolver.setOrder(1);
+    resolver.setCacheable(true);
+
+    templateEngine.setTemplateResolver(resolver);
+
+    return templateEngine;
   }
 
   public static void main(String[] args) {

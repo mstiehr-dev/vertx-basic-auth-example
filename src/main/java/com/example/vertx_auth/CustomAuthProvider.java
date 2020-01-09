@@ -59,7 +59,7 @@ public class CustomAuthProvider implements AuthProvider {
       String password = authInfo.getString("password");
       User authorizedUser = users.get(username);
       if (StringUtils.equals(password, authorizedUser.getPassword())) {
-        resultHandler.handle(Future.succeededFuture());
+        resultHandler.handle(Future.succeededFuture(authorizedUser));
         return;
       }
       log.debug("login failed for user " + username);

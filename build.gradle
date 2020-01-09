@@ -29,6 +29,8 @@ def doOnChange = './gradlew classes'
 dependencies {
   implementation "io.vertx:vertx-web:$vertxVersion"
   implementation "io.vertx:vertx-auth-common:$vertxVersion"
+  implementation "org.thymeleaf:thymeleaf:3.0.11.RELEASE"
+  implementation "org.thymeleaf:thymeleaf-spring4:3.0.11.RELEASE"
 
   compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.9'
 
