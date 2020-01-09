@@ -1,14 +1,14 @@
 package com.example.vertx_auth;
 
-import com.example.vertx_auth.handler.AdminPageHandler;
-import com.example.vertx_auth.handler.DebugHandler;
-import com.example.vertx_auth.handler.LogoutPageHandler;
+import com.example.vertx_auth.handler.*;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BasicAuthHandler;
+import io.vertx.ext.web.handler.BodyHandler;
+import io.vertx.ext.web.handler.FormLoginHandler;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
@@ -21,9 +21,13 @@ public class MainVerticle extends AbstractVerticle {
   public void start(Promise<Void> startPromise) throws Exception {
 
     Router router = Router.router(vertx);
-//    router.get("/").handler(new LoginPageHandler(templateEngine));
+    router.route().handler(BodyHandler.create());
+    router.get("/")
+      .handler(new LoginPageHandler(templateEngine));
     router.route("/admin")
       .handler(new DebugHandler())
+//      .handler(FormLoginHandler.create(authProvider).setDirectLoggedInOKURL("admin"))
+      .handler(new FormAuthhandler())
       .handler(BasicAuthHandler.create(authProvider))
       .handler(new AdminPageHandler(templateEngine))
     ;
