@@ -7,6 +7,6 @@ import io.vertx.ext.web.sstore.AbstractSession;
 public class UserSession extends AbstractSession {
 
   public UserSession(Vertx vertx) {
-    super(new PRNG(vertx), 60_000, 10);
+    super(new PRNG(vertx), 60, 10);
   }
 }
