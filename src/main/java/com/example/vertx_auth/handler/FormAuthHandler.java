@@ -1,15 +1,15 @@
 package com.example.vertx_auth.handler;
 
 import com.example.vertx_auth.domain.auth.User;
-import com.example.vertx_auth.domain.auth.UserSession;
-import io.vertx.core.*;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
+import io.vertx.core.MultiMap;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.Session;
 import io.vertx.ext.web.handler.impl.AuthHandlerImpl;
-
-import java.util.Base64;
+import io.vertx.ext.web.handler.impl.HttpStatusException;
 
 public class FormAuthHandler extends AuthHandlerImpl {
   public FormAuthHandler(AuthProvider authProvider) {
@@ -27,13 +27,6 @@ public class FormAuthHandler extends AuthHandlerImpl {
       String username = params.get("username");
       String password = params.get("password");
 
-      // put basic auth into headers and go to next handler
-//      String basic = username + ":" + password;
-//      String encoded = Base64.getEncoder().encodeToString(basic.getBytes());
-//      context.request().headers().add("Authorization", "Basic " + encoded);
-//      context.next();
-
-
       JsonObject userJson = new JsonObject().put("username", username).put("password", password);
       authProvider.authenticate(userJson, ar -> {
         if (ar.succeeded()) {
@@ -42,7 +35,7 @@ public class FormAuthHandler extends AuthHandlerImpl {
           context.setUser(user);
           handler.handle(Future.succeededFuture(userJson));
         } else {
-          handler.handle(Future.failedFuture("authentication failed"));
+          handler.handle(Future.failedFuture(new HttpStatusException(401)));
         }
       });
     } else if (context.session() != null && context.session().get("user") != null){
@@ -50,7 +43,7 @@ public class FormAuthHandler extends AuthHandlerImpl {
       context.setUser(user);
       handler.handle(Future.succeededFuture(JsonObject.mapFrom(user)));
     } else {
-      context.next();
+      context.fail(403);
     }
   }
 }
