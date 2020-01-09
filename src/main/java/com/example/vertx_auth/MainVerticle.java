@@ -6,11 +6,9 @@ import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
 import io.vertx.ext.auth.AuthProvider;
 import io.vertx.ext.web.Router;
-import io.vertx.ext.web.handler.BasicAuthHandler;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.SessionHandler;
 import io.vertx.ext.web.sstore.LocalSessionStore;
-import io.vertx.ext.web.sstore.SessionStore;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
@@ -32,9 +30,7 @@ public class MainVerticle extends AbstractVerticle {
     ;
     router.route("/admin")
       .handler(new DebugHandler())
-//      .handler(FormLoginHandler.create(authProvider).setDirectLoggedInOKURL("admin"))
       .handler(new FormAuthHandler(authProvider))
-      .handler(BasicAuthHandler.create(authProvider))
       .handler(new AdminPageHandler(templateEngine))
     ;
     router.route("/logout").handler(new LogoutPageHandler(templateEngine));
