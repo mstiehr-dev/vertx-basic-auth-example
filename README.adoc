@@ -1,4 +1,22 @@
-= Vertx-auth
+= Vertx-auth: hosting an admin page protected by basic authentication
+
+Html rendinering using Thymeleaf
+
+Login page:
+```
+http://localhost:8888/
+```
+# Note: credentials are not being encrypted - https needs to be set up for 'production' 
+
+Admin page: 
+```
+http://localhost:8888/admin
+```
+
+Logout page:
+```
+http://localhost:8888/logout
+```
 
 image:https://img.shields.io/badge/vert.x-3.8.4-purple.svg[link="https://vertx.io"]
 
@@ -20,12 +38,3 @@ To run your application:
 ```
 ./gradlew clean run
 ```
-
-== Help
-
-* https://vertx.io/docs/[Vert.x Documentation]
-* https://stackoverflow.com/questions/tagged/vert.x?sort=newest&pageSize=15[Vert.x Stack Overflow]
-* https://groups.google.com/forum/?fromgroups#!forum/vertx[Vert.x User Group]
-* https://gitter.im/eclipse-vertx/vertx-users[Vert.x Gitter]
-
-
